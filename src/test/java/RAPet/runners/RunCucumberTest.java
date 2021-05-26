@@ -1,4 +1,4 @@
-package RAPet;
+package RAPet.runners;
 
 import io.cucumber.junit.Cucumber;
 import io.cucumber.junit.CucumberOptions;
