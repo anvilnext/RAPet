@@ -1,13 +1,12 @@
 package services;
 
 import models.api.User;
-import models.api.ApiResponse;
 
 public interface UserService extends BasicService {
 
     User getUser(String username);
-    ApiResponse postUser(User user);
-    ApiResponse putUser(String username, User user);
-    ApiResponse loginUser(String login, String password);
+    void postUser(User user);
+    void putUser(String username, User user);
+    void loginUser(String login, String password);
 
 }

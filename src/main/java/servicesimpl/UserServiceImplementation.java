@@ -4,18 +4,17 @@ import io.restassured.RestAssured;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.http.ContentType;
-import io.restassured.response.Response;
 import models.api.User;
-import models.api.ApiResponse;
 import services.UserService;
 
 import static config.BaseData.URI;
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.containsString;
 
 public class UserServiceImplementation implements UserService {
 
-    private String SERVICE_URL = "/user";
-    private String LOGIN_URL = "/login";
+    private final String SERVICE_URL = "/user";
+    private final String LOGIN_URL = "/login";
 
     public void enableLogging() {
         RestAssured.filters(new RequestLoggingFilter(), new ResponseLoggingFilter());
@@ -25,65 +24,59 @@ public class UserServiceImplementation implements UserService {
     public User getUser(String username) {
 
         enableLogging();
-        String url = URI + SERVICE_URL + "/" + username;
-
-        Response r = given()
-                .get(url);
-
-        if (r.statusCode() == 200) {
-            return r.as(User.class);
-        }
-        else return null;
+        return given()
+                .baseUri(URI)
+                .basePath(SERVICE_URL + "/" + username)
+                .when()
+                .get()
+                .then()
+                .statusCode(200)
+                .extract().response().as(User.class);
     }
 
     @Override
-    public ApiResponse postUser(User user) {
+    public void postUser(User user) {
 
         enableLogging();
-        String url = URI + SERVICE_URL;
-
-        Response r = given()
+        given()
+                .baseUri(URI)
+                .basePath(SERVICE_URL)
                 .contentType(ContentType.JSON)
                 .body(user)
-                .post(url);
-
-        if (r.statusCode() == 200) {
-            return r.as(ApiResponse.class);
-        }
-        else return null;
+                .when()
+                .post()
+                .then()
+                .statusCode(200);
     }
 
     @Override
-    public ApiResponse putUser(String username, User user) {
+    public void putUser(String username, User user) {
 
         enableLogging();
-        String url = URI + SERVICE_URL + "/" + username;
-
-        Response r = given()
+        given()
+                .baseUri(URI)
+                .basePath(SERVICE_URL + "/" + username)
                 .contentType(ContentType.JSON)
                 .body(user)
-                .put(url);
-
-        if (r.statusCode() == 200) {
-            return r.as(ApiResponse.class);
-        }
-        else return null;
+                .when()
+                .put()
+                .then()
+                .statusCode(200);
     }
 
     @Override
-    public ApiResponse loginUser(String login, String password) {
+    public void loginUser(String login, String password) {
 
         enableLogging();
-        String url = URI + SERVICE_URL + LOGIN_URL;
-
-        Response r = given()
-                .queryParam("username", login)
-                .queryParam("password", password)
-                .get(url);
-
-        if (r.statusCode() == 200) {
-            return r.as(ApiResponse.class);
-        }
-        else return null;
+        given()
+                .baseUri(URI)
+                .basePath(SERVICE_URL + LOGIN_URL)
+                .param("username", login)
+                .param("password", password)
+                .when()
+                .get()
+                .then()
+                .statusCode(200)
+                .body("message", containsString("logged in user session"));
     }
 }
