@@ -1,8 +1,5 @@
 package servicesimpl;
 
-import io.restassured.RestAssured;
-import io.restassured.filter.log.RequestLoggingFilter;
-import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.http.ContentType;
 import models.api.User;
 import services.UserService;
@@ -11,14 +8,10 @@ import static config.BaseData.URI;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.containsString;
 
-public class UserServiceImplementation implements UserService {
+public class UserServiceImplementation extends BasicServiceImplementation implements UserService {
 
     private final String SERVICE_URL = "/user";
     private final String LOGIN_URL = "/login";
-
-    public void enableLogging() {
-        RestAssured.filters(new RequestLoggingFilter(), new ResponseLoggingFilter());
-    }
 
     @Override
     public User getUser(String username) {
