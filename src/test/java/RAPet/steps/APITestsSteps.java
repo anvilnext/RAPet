@@ -1,11 +1,12 @@
 package RAPet.steps;
 
-import RAPet.methods.APITestsAdditionalMethods;
-import io.cucumber.datatable.DataTable;
+import cucumber.ScenarioContext;
+import enums.Context;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import models.api.DataItem;
 import models.api.User;
+import models.api.UserList;
 import org.junit.Assert;
 import services.ReqresService;
 import services.UserService;
@@ -17,15 +18,16 @@ import java.util.List;
 public class APITestsSteps {
     UserService userService = new UserServiceImplementation();
     ReqresService reqresService = new ReqresServiceImplementation();
+    ScenarioContext scenarioContext = new ScenarioContext();
 
     @Given("I post next user in PetStore:")
-    public void postUserInPetstoreStep(DataTable table) {
-        userService.postUser(APITestsAdditionalMethods.buildUser(table));
+    public void postUserInPetstoreStep(User table) {
+        userService.postUser(table);
     }
 
     @Given("I put changes to user {string} in PetStore:")
-    public void putChangesToUserInPetStore(String username, DataTable table) {
-        userService.putUser(username, APITestsAdditionalMethods.buildUser(table));
+    public void putChangesToUserInPetStore(String username, User table) {
+        userService.putUser(username, table);
     }
 
     @Given("I login as a user {string} with password {string}")
@@ -39,9 +41,15 @@ public class APITestsSteps {
         Assert.assertEquals(getUserResponse.getUsername(), username);
     }
 
-    @Given("I get last name of user on page '{int}', who is '{int}' on page, and the name is {string}")
-    public void getLastNameFromListOfUsersOnPage(int page, int userPageId, String name) {
-        Assert.assertEquals(reqresService.getLastNameFromListOfUsers(page, userPageId), name);
+    @Given("I get last name of user on page '{int}', who is '{int}' on page")
+    public void getLastNameFromListOfUsersOnPage(int page, int userPageId) {
+        UserList userList = reqresService.getUserList(page);
+        scenarioContext.setContext(Context.USERNAME, userList.getData().get(userPageId - 1).getLastName());
+    }
+
+    @Given("the last name of the user is {string}")
+    public void getLastNameOfTheUser(String name) {
+        Assert.assertEquals(scenarioContext.getContext(Context.USERNAME), name);
     }
 
     @Given("I get data of user on page '{int}', who is '{int}' on page, and last name is {string}")

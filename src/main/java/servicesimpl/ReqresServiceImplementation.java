@@ -3,7 +3,7 @@ package servicesimpl;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import models.api.DataItem;
-import models.api.User;
+import models.api.UserList;
 import services.ReqresService;
 import utils.ReqWrapper;
 
@@ -24,7 +24,7 @@ public class ReqresServiceImplementation extends BasicServiceImplementation impl
             .build();
 
     @Override
-    public String getLastNameFromListOfUsers(int page, int idOnPage) {
+    public UserList getUserList(int page) {
         enableLogging();
         return given()
                 .spec(USER_SPEC)
@@ -32,7 +32,7 @@ public class ReqresServiceImplementation extends BasicServiceImplementation impl
                 .when().get()
                 .then()
                 .statusCode(200)
-                .extract().jsonPath().getString(format("data[%s].last_name", idOnPage - 1));
+                .extract().response().as(UserList.class);
     }
 
     @Override

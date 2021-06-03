@@ -20,7 +20,8 @@ Feature: Testing API
 
 
   Scenario: Get list of users in Reqres and check last name of defined user
-    Given I get last name of user on page '2', who is '2' on page, and the name is 'Ferguson'
+    Given I get last name of user on page '2', who is '2' on page
+    Then the last name of the user is 'Ferguson'
 
 
   Scenario: Get user data from list of users
