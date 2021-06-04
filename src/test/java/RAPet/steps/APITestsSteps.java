@@ -4,6 +4,7 @@ import cucumber.ScenarioContext;
 import enums.Context;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import io.restassured.response.Response;
 import models.api.DataItem;
 import models.api.User;
 import models.api.UserList;
@@ -14,6 +15,8 @@ import servicesimpl.ReqresServiceImplementation;
 import servicesimpl.UserServiceImplementation;
 
 import java.util.List;
+
+import static servicesimpl.ReqresServiceImplementation.Variables.USER_DATA;
 
 public class APITestsSteps {
     UserService userService = new UserServiceImplementation();
@@ -47,15 +50,34 @@ public class APITestsSteps {
         scenarioContext.setContext(Context.USERNAME, userList.getData().get(userPageId - 1).getLastName());
     }
 
-    @Given("the last name of the user is {string}")
+    @Then("the last name of the user is {string}")
     public void getLastNameOfTheUser(String name) {
         Assert.assertEquals(scenarioContext.getContext(Context.USERNAME), name);
     }
 
-    @Given("I get data of user on page '{int}', who is '{int}' on page, and last name is {string}")
-    public void getUserDataFromListOfUsersOnPage(int page, int userPageId, String lastName) {
-        List<DataItem> users = reqresService.getUserDataFromListOfUsers(page, userPageId);
-        Assert.assertEquals(users.get(userPageId - 1).getLastName(), lastName);
+    @Given("I get data of user on page '{int}', who is '{int}' on page")
+    public void getUserDataFromListOfUsersOnPage(int page, int userPageId) {
+        List<DataItem> users = reqresService.getUserDataFromListOfUsers(page);
+        USER_DATA.set(users.get(userPageId - 1));
+    }
+
+    @Then("I check that the last name is {string}")
+    public void checkLastNameOfTheUser(String name) {
+        DataItem user = USER_DATA.get();
+        Assert.assertEquals(user.getLastName(), name);
+    }
+
+    @Given("I get response data of users on page '{int}'")
+    public void getResponseUserList(int page) {
+        Response response = reqresService.getResponseUserList(page);
+        scenarioContext.setContext(Context.RESPONSE, response);
+    }
+
+    @Then("the email of the '{int}' user is {string}")
+    public void getEmailOfTheUser(int userId, String email) {
+        Response response = scenarioContext.getContext(Context.RESPONSE);
+        UserList actualData = response.as(UserList.class);
+        Assert.assertEquals(actualData.getData().get(userId - 1).getEmail(), email);
     }
 
     @Given("I login as a Reqres user {string} with password {string}")

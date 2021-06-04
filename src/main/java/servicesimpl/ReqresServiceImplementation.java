@@ -1,49 +1,47 @@
 package servicesimpl;
 
-import io.restassured.builder.RequestSpecBuilder;
-import io.restassured.specification.RequestSpecification;
+import io.restassured.response.Response;
 import models.api.DataItem;
 import models.api.UserList;
+import serenity.SessionVariable;
 import services.ReqresService;
+import specifications.SpecificationBuilder;
 import utils.ReqWrapper;
 
 import java.util.List;
 
-import static config.BaseData.REQRES;
 import static io.restassured.RestAssured.given;
-import static java.lang.String.format;
+
 
 public class ReqresServiceImplementation extends BasicServiceImplementation implements ReqresService {
-
-    private final String USERS_SERVICE = "/api/users";
-
-    private final RequestSpecification USER_SPEC =
-            new RequestSpecBuilder()
-            .setBaseUri(REQRES)
-            .setBasePath(USERS_SERVICE)
-            .build();
 
     @Override
     public UserList getUserList(int page) {
         enableLogging();
         return given()
-                .spec(USER_SPEC)
-                .param("page", page)
+                .spec(SpecificationBuilder.getUserSpec(page))
                 .when().get()
-                .then()
-                .statusCode(200)
+                .then().spec(SpecificationBuilder.getResponseSpec())
                 .extract().response().as(UserList.class);
     }
 
     @Override
-    public List<DataItem> getUserDataFromListOfUsers(int page, int idOnPage) {
+    public Response getResponseUserList(int page) {
         enableLogging();
         return given()
-                .spec(USER_SPEC)
-                .param("page", page)
+                .spec(SpecificationBuilder.getUserSpec(page))
                 .when().get()
-                .then()
-                .statusCode(200)
+                .then().spec(SpecificationBuilder.getResponseSpec())
+                .extract().response();
+    }
+
+    @Override
+    public List<DataItem> getUserDataFromListOfUsers(int page) {
+        enableLogging();
+        return given()
+                .spec(SpecificationBuilder.getUserSpec(page))
+                .when().get()
+                .then().spec(SpecificationBuilder.getResponseSpec())
                 .extract().jsonPath().getList("data", DataItem.class);
     }
 
@@ -51,5 +49,9 @@ public class ReqresServiceImplementation extends BasicServiceImplementation impl
     public void loginUser(String login, String password) {
         enableLogging();
         ReqWrapper wrapper = ReqWrapper.userLogin(login, password);
+    }
+
+    public enum Variables implements SessionVariable {
+        USER_DATA
     }
 }

@@ -1,5 +1,7 @@
 package enums;
 
 public enum Context {
-    USERNAME;
+    USERNAME,
+    REQRES_REQUEST,
+    RESPONSE;
 }

@@ -12,12 +12,12 @@ public class ScenarioContext {
         scenarioContext = new HashMap<>();
     }
 
-    public void setContext(Context key, Object value) {
+    public <T> void setContext(Context key, T value) {
         scenarioContext.put(key.toString(), value);
     }
 
-    public Object getContext(Context key){
-        return scenarioContext.get(key.toString());
+    public <T> T getContext(Context key){
+        return (T) scenarioContext.get(key.toString());
     }
 
     public Boolean contains(Context key){
