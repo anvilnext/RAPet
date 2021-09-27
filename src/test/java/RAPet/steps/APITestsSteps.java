@@ -5,23 +5,25 @@ import enums.Context;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.restassured.response.Response;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import models.api.DataItem;
 import models.api.User;
 import models.api.UserList;
 import org.junit.Assert;
 import services.ReqresService;
 import services.UserService;
-import servicesimpl.ReqresServiceImplementation;
-import servicesimpl.UserServiceImplementation;
 
 import java.util.List;
 
 import static servicesimpl.ReqresServiceImplementation.Variables.USER_DATA;
 
+@AllArgsConstructor
+@NoArgsConstructor
 public class APITestsSteps {
-    UserService userService = new UserServiceImplementation();
-    ReqresService reqresService = new ReqresServiceImplementation();
-    ScenarioContext scenarioContext = new ScenarioContext();
+    UserService userService;
+    ReqresService reqresService;
+    ScenarioContext scenarioContext;
 
     @Given("I post next user in PetStore:")
     public void postUserInPetstoreStep(User table) {
