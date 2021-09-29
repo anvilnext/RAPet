@@ -15,22 +15,6 @@ public class BaseSteps {
         driver.manage().window().maximize();
     }
 
-    public static void openPage(String url) {
-        driver.navigate().to(url);
-    }
-
-    public static boolean checkPageUrlEnding(String ending) {
-        return driver.getCurrentUrl().endsWith(ending);
-    }
-
-    public static WebElement getElement(String xpath) {
-        return driver.findElement(By.xpath(xpath));
-    }
-
-    public static List<WebElement> getElements(String xpath) {
-        return driver.findElements(By.xpath(xpath));
-    }
-
     public static void quitDriver() {
         driver.quit();
     }
